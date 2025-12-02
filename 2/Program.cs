@@ -11,7 +11,7 @@ static IEnumerable<long> CreateRange(long start, long count)
     }
 }
 
-var reader = new StreamReader("input.txt");
+using var reader = new StreamReader("input.txt");
 var line = reader.ReadLine();
 var regex = "^(\\d+)\\1{1,}$";
 var matches = new List<long>();
@@ -33,5 +33,4 @@ while (line != null)
     line = reader.ReadLine();
 }
 
-reader.Close();
 Console.WriteLine(matches.Sum());

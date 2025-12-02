@@ -22,7 +22,7 @@ var wrapped = (int current, int difference, int range) =>
 
 var wrapped100 = (int current, int difference) => wrapped(current, difference, 100);
 
-var reader = new StreamReader("input.txt");
+using var reader = new StreamReader("input.txt");
 var line = reader.ReadLine();
 while (line != null)
 {
@@ -40,6 +40,5 @@ while (line != null)
 
     line = reader.ReadLine();
 }
-reader.Close();
 
 Console.WriteLine(occurrences);
