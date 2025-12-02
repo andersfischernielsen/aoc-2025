@@ -12,10 +12,10 @@ static IEnumerable<long> CreateRange(long start, long count)
 }
 
 using var reader = new StreamReader("input.txt");
-var line = reader.ReadLine();
 var regex = "^(\\d+)\\1{1,}$";
 var matches = new List<long>();
 
+var line = reader.ReadLine();
 while (line != null)
 {
     var ranges = line.Split(',');
