@@ -54,46 +54,38 @@ static bool IsOnSegment(int x, int y, Edge edge)
     return false;
 }
 
-static bool IsInside(int x, int y, List<Edge> edges)
+static int CountCrossing(int x, int y, Edge edge)
 {
-    var crossings = 0;
-    foreach (var edge in edges)
+    var (x1, y1) = edge.From;
+    var (x2, y2) = edge.To;
+
+    var isHorizontal = y1 == y2;
+    if (isHorizontal)
+        return 0;
+
+    if (y1 > y2)
     {
-        var (x1, y1) = edge.From;
-        var (x2, y2) = edge.To;
-
-        if (IsOnSegment(x, y, edge))
-            return true;
-
-        var isHorizontal = y1 == y2;
-        if (isHorizontal)
-            continue;
-
-        if (y1 > y2)
-        {
-            (x1, x2) = (x2, x1);
-            (y1, y2) = (y2, y1);
-        }
-
-        if (y >= y1 && y < y2)
-        {
-            var xIntersect = x1 + (double)(x2 - x1) * (y - y1) / (y2 - y1);
-            if (xIntersect > x)
-                crossings++;
-        }
+        (x1, x2) = (x2, x1);
+        (y1, y2) = (y2, y1);
     }
 
-    return crossings % 2 == 1;
+    if (y >= y1 && y < y2)
+    {
+        var xIntersect = x1 + (double)(x2 - x1) * (y - y1) / (y2 - y1);
+        if (xIntersect > x)
+            return 1;
+    }
+
+    return 0;
 }
 
-static bool IsRectangleInside(Rectangle rect, List<Edge> edges)
+static bool IsInside(int x, int y, List<Edge> edges)
 {
-    if (!IsInside(rect.MinX, rect.MinY, edges)) return false;
-    if (!IsInside(rect.MaxX, rect.MinY, edges)) return false;
-    if (!IsInside(rect.MinX, rect.MaxY, edges)) return false;
-    if (!IsInside(rect.MaxX, rect.MaxY, edges)) return false;
+    if (edges.Any(e => IsOnSegment(x, y, e)))
+        return true;
 
-    return !edges.Any(e => CrossesInterior(e, rect));
+    var crossings = edges.Aggregate(0, (count, edge) => count + CountCrossing(x, y, edge));
+    return crossings % 2 == 1;
 }
 
 static bool CrossesInterior(Edge edge, Rectangle rect)
@@ -112,6 +104,16 @@ static bool CrossesInterior(Edge edge, Rectangle rect)
     var minX = Math.Min(x1, x2);
     var maxX = Math.Max(x1, x2);
     return y1 > rect.MinY && y1 < rect.MaxY && maxX > rect.MinX && minX < rect.MaxX;
+}
+
+static bool IsRectangleInside(Rectangle rect, List<Edge> edges)
+{
+    if (!IsInside(rect.MinX, rect.MinY, edges)) return false;
+    if (!IsInside(rect.MaxX, rect.MinY, edges)) return false;
+    if (!IsInside(rect.MinX, rect.MaxY, edges)) return false;
+    if (!IsInside(rect.MaxX, rect.MaxY, edges)) return false;
+
+    return !edges.Any(e => CrossesInterior(e, rect));
 }
 
 static long PartTwo(string path)
