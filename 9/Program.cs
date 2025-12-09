@@ -8,11 +8,6 @@
             .ThenBy(c => c.Item2)
         ];
 
-    var minX = coordinates.Min(c => c.x);
-    var maxX = coordinates.Max(c => c.x);
-    var minY = coordinates.Min(c => c.y);
-    var maxY = coordinates.Max(c => c.y);
-
     long largestArea = 0;
     for (var i = 0; i < coordinates.Count; i++)
     {
